@@ -131,5 +131,6 @@ public abstract class FileSplitter<T>
     });
 
     protected abstract Result<T> ReadLine(string? line);
+
     protected abstract IComparer<T> GetComparer();
 }
