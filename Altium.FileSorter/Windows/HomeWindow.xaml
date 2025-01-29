@@ -1,0 +1,168 @@
+﻿<Window x:Class="Altium.FileSorter.Windows.HomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        WindowState="Maximized"
+        DataContext="{Binding Path=HomeViewModel, Source={StaticResource ViewModelLocator}}"
+        Title="File sorter" Height="450" Width="800">
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="25"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="File sorter"
+                   Grid.Row="0"
+                   Grid.Column="0"
+                   FontSize="25"
+                   FontWeight="Bold"/>
+
+        <Separator Height="5"
+                   Grid.Column="0"
+                   VerticalAlignment="Bottom"
+                   Grid.Row="0"
+                   Background="Black"
+                   Margin="0, 0, 0, 10"
+                   Width="Auto"/>
+
+        <StackPanel Grid.Row="1"
+                    Grid.Column="0">
+
+            <StackPanel>
+                <TextBlock Text="Current sample file"
+                           FontWeight="Bold"/>
+                <StackPanel Visibility="{Binding SampleFile, Converter={StaticResource NullVisibilityConverter}}">
+                    <TextBlock>
+                        <Run Text="Last write at"/>
+                        <Run Text="{Binding SampleFile.LastWriteTime, FallbackValue=-}"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Size: "/>
+                        <Run Text="{Binding SampleFile.Length, FallbackValue=-, Mode=OneWay}"/>
+                        <Run Text="bytes"/>
+                    </TextBlock>
+                </StackPanel>
+
+                <StackPanel Visibility="{Binding SampleFile, Converter={StaticResource ReverseNullVisibilityConverter}}">
+                    <TextBlock Text="There is no sample file"/>
+                </StackPanel>
+
+                <TextBlock Text="Sorted file"
+                           Margin="0, 10, 0, 0" 
+                           FontWeight="Bold"/>
+
+                <StackPanel Visibility="{Binding SortedFile, Converter={StaticResource NullVisibilityConverter}}">
+                    <TextBlock>
+                        <Run Text="Last write at"/>
+                        <Run Text="{Binding SortedFile.LastWriteTime, FallbackValue=-}"/>
+                    </TextBlock>
+                    <TextBlock>
+                        <Run Text="Size: "/>
+                        <Run Text="{Binding SortedFile.Length, FallbackValue=-, Mode=OneWay}"/>
+                        <Run Text="bytes"/>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Visibility="{Binding SortedFile, Converter={StaticResource ReverseNullVisibilityConverter}}">
+                    <TextBlock Text="There is no sorted file"/>
+                </StackPanel>
+
+                <StackPanel Margin="0, 20, 0, 0">
+                    <Separator Height="5"
+                               VerticalAlignment="Bottom"
+                               Background="Black"
+                               Width="Auto"/>
+
+                    <TextBlock Text="Create sample file"
+                               FontWeight="Bold"/>
+                    <TextBlock>
+                        <Run Text="Size"/>
+                        <Run Text="{Binding ElementName=SizeSlider, Path=Value}"/>
+                        <Run Text="bytes"/>
+                    </TextBlock>
+
+                    <Slider x:Name="SizeSlider"
+                            IsEnabled="{Binding IsProcessing, Converter={StaticResource ReverseBooleanConverter}}"
+                            Minimum="1000"
+                            Maximum="{Binding MaximumSampleFileSize}"
+                            Value="{Binding SampleFileGenerationSize}"/>
+
+                    <Button Content="Generate"
+                            Margin="0, 5, 0, 0"
+                            IsEnabled="{Binding IsProcessing, Converter={StaticResource ReverseBooleanConverter}}"
+                            Background="ForestGreen"
+                            Command="{Binding GenerateFileCommand}"/>
+                </StackPanel>
+
+                <StackPanel Margin="0, 20, 0, 0">
+
+                    <Separator Height="5"
+                               VerticalAlignment="Top"
+                               Background="Black"
+                               Width="Auto"/>
+
+                    <TextBlock Text="Sort sample file"
+                               FontWeight="Bold"/>
+
+                    <Button Content="Sort"
+                            Margin="0, 10, 0, 0"
+                            Background="ForestGreen"
+                            IsEnabled="{Binding IsProcessing, Converter={StaticResource ReverseBooleanConverter}}"
+                            Command="{Binding SortCommand}"/>
+
+                </StackPanel>
+            </StackPanel>
+
+        </StackPanel>
+
+        <Grid Grid.Column="2" 
+              Grid.Row="0"
+              Grid.RowSpan="2">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <TextBlock Text="Log stream"
+                           HorizontalAlignment="Left"
+                           FontWeight="Bold"
+                           Grid.Row="0"/>
+
+                <Button HorizontalAlignment="Right"
+                        Command="{Binding ClearLogsCommand}"
+                        Content="Clear"/>
+            </Grid>
+
+
+            <ListView ItemsSource="{Binding Logs}" Grid.Row="1">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Level" x:Name="HeaderLevel">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Level}" Foreground="{Binding ., Converter={StaticResource LogLevelColorConverter}}" />
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="Time"  DisplayMemberBinding="{Binding DateTime, StringFormat=HH:mm:ss}" />
+                        <GridViewColumn Header="Message" DisplayMemberBinding="{Binding Value}" />
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+
+    </Grid>
+</Window>

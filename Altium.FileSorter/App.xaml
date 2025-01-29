@@ -1,0 +1,13 @@
+﻿<Application x:Class="Altium.FileSorter.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mvvm="clr-namespace:Altium.FileSorter.Mvvm"
+             StartupUri="/Windows/HomeWindow.xaml">
+    <Application.Resources>
+        <mvvm:ViewModelLocator x:Key="ViewModelLocator"/>
+        <mvvm:NullVisibilityConverter x:Key="NullVisibilityConverter"/>
+        <mvvm:ReverseNullVisibilityConverter x:Key="ReverseNullVisibilityConverter"/>
+        <mvvm:LogLevelColorConverter x:Key="LogLevelColorConverter"/>
+        <mvvm:ReverseBooleanConverter x:Key="ReverseBooleanConverter"/>
+    </Application.Resources>
+</Application>
